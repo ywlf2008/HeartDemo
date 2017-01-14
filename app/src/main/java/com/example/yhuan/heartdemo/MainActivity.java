@@ -2,8 +2,10 @@ package com.example.yhuan.heartdemo;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.yhuan.heartdemo.ColorTrack.ColorTrackView;
 import com.example.yhuan.heartdemo.heart.HeartView;
@@ -21,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
         colorTrackView = (ColorTrackView)findViewById(R.id.color_view);
         heartView = (HeartView)findViewById(R.id.heart_view);
         beckoningUtil = new BeckoningUtil(this);
+        colorTrackView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.this.startActivity(new Intent(MainActivity.this,HeartActivity.class));
+            }
+        });
     }
 
     @Override

@@ -41,7 +41,6 @@
             app:text_origin_color="#00000000"
             app:text_size="60sp"/>
 
-
     </FrameLayout>
 
 </RelativeLayout>
