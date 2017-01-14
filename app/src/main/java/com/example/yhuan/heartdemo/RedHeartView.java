@@ -7,7 +7,6 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.example.yhuan.heartdemo.heart.MyUtil;
 import com.example.yhuan.heartdemo.heart.Point;
 
 /**
@@ -16,14 +15,6 @@ import com.example.yhuan.heartdemo.heart.Point;
 
 public class RedHeartView extends View {
 
-    private float stretchA;//第一个控制点延长线倍数
-    private float stretchB;//第二个控制点延长线倍数
-    private float startAngle;//起始旋转角，用于确定第一个端点
-    private float angle;//两条线之间夹角，由起始旋转角和夹角可以确定第二个端点
-    private int radius = 2;//花芯的半径
-    private float growFactor;//增长因子，花瓣是有开放的动画效果，这个参数决定花瓣展开速度
-    private int color;//花瓣颜色
-    private boolean isFinished = false;//花瓣是否绽放完成
     private Path path = new Path();//用于保存三次贝塞尔曲线
     private Paint paint = new Paint();//画笔
     int offsetX;
@@ -43,14 +34,47 @@ public class RedHeartView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
 
-        setMeasuredDimension(width,height);
+        int width = measureWidth(widthMeasureSpec);
+        int height = measureHeight(heightMeasureSpec);
+        setMeasuredDimension(width, height);
 
         offsetX = getWidth() / 2;
         offsetY = getHeight() / 2 - 55;
+    }
+
+    private int measureHeight(int measureSpec) {
+        int mode = MeasureSpec.getMode(measureSpec);
+        int val = MeasureSpec.getSize(measureSpec);
+        int result = 0;
+        switch (mode) {
+            case MeasureSpec.EXACTLY:
+                result = val;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                result += val+getPaddingTop() + getPaddingBottom();
+                break;
+        }
+        result = mode == MeasureSpec.AT_MOST ? Math.min(result, val) : result;
+        return result;
+    }
+
+    private int measureWidth(int measureSpec) {
+        int mode = MeasureSpec.getMode(measureSpec);
+        int val = MeasureSpec.getSize(measureSpec);
+        int result = 0;
+        switch (mode) {
+            case MeasureSpec.EXACTLY:
+                result = val;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                result += val+getPaddingLeft() + getPaddingRight();
+                break;
+        }
+        result = mode == MeasureSpec.AT_MOST ? Math.min(result, val) : result;
+        return result;
     }
 
     @Override
