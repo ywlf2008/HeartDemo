@@ -1,4 +1,4 @@
-package com.example.yhuan.heartdemo;
+package com.example.yhuan.heartdemo.heart;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +27,11 @@ public class HeartView extends SurfaceView implements SurfaceHolder.Callback {
     private Bitmap bm;
     private Canvas canvas;
     private int heartRadio = 1;
+    private int mDrawState = PREPARE;
+    private static final int PREPARE = -1;
+    private static final int PAUSE = 0;
+    private static final int RUNNING = 1;
+    private static final int COMPLETE = 2;
 
     public HeartView(Context context) {
         super(context);
@@ -65,10 +70,10 @@ public class HeartView extends SurfaceView implements SurfaceHolder.Callback {
             b.draw(canvas);
         }
         Canvas c = surfaceHolder.lockCanvas();
-
-        c.drawBitmap(bm, 0, 0, null);
-
-        surfaceHolder.unlockCanvasAndPost(c);
+        if (c != null) {
+            c.drawBitmap(bm, 0, 0, null);
+            surfaceHolder.unlockCanvasAndPost(c);
+        }
 
     }
 
@@ -92,7 +97,21 @@ public class HeartView extends SurfaceView implements SurfaceHolder.Callback {
                 isDrawing = true;
 
                 float angle = 10;
-                while (true) {
+                while (isDrawing) {
+                    switch (mDrawState) {
+                        case PAUSE:
+                            try {
+                                Thread.currentThread().wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case RUNNING:
+                            break;
+                        case COMPLETE:
+                            isDrawing = false;
+                            continue;
+                    }
 
                     Bloom bloom = getBloom(angle);
                     if (bloom != null) {
@@ -165,7 +184,11 @@ public class HeartView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+//        isDrawing = false;
+    }
 
+    public void stopDraw() {
+        mDrawState = COMPLETE;
     }
 
 }
